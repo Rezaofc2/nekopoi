@@ -13,12 +13,16 @@ interface PostItem {
 }
 
 const NAV_ITEMS = [
-  { label: 'Home', href: '/', icon: '🏠' },
-  { label: 'Hentai', href: '/category/hentai', icon: '🔞' },
-  { label: '2D Animation', href: '/category/2d-animation', icon: '🎬' },
-  { label: '3D Hentai', href: '/category/3d-hentai', icon: '🎮' },
-  { label: 'JAV', href: '/category/jav', icon: '🎥' },
-  { label: 'JAV Cosplay', href: '/category/jav-cosplay', icon: '👘' },
+  { label: 'Home', href: '/' },
+  { label: 'Hentai', href: '/category/hentai' },
+  { label: '2D Animation', href: '/category/2d-animation' },
+  { label: '3D Hentai', href: '/category/3d-hentai' },
+  { label: 'JAV', href: '/category/jav' },
+  { label: 'JAV Cosplay', href: '/category/jav-cosplay' },
+  { label: 'Hentai List', href: '/hentai-list' },
+  { label: 'JAV List', href: '/jav-list' },
+  { label: 'Genre List', href: '/genre-list' },
+  { label: 'Jadwal', href: '/jadwal-new-hentai' },
 ];
 
 export default function HomePage() {
@@ -41,8 +45,10 @@ export default function HomePage() {
       } else {
         setPosts(data || []);
       }
-      setHasMore(data && data.length >= 12);
-    } catch {}
+      setHasMore(data && data.length >= 10);
+    } catch {
+      setPosts([]);
+    }
     setLoading(false);
   }, []);
 
@@ -99,12 +105,12 @@ export default function HomePage() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-1 text-xs font-medium">
+          <nav className="hidden md:flex items-center gap-1 text-[11px] font-medium flex-wrap justify-center">
             {NAV_ITEMS.map((item) => (
               <Link
                 key={item.label}
                 href={item.href}
-                className="px-2.5 py-1.5 text-gray-400 hover:text-pink-300 hover:bg-pink-500/10 rounded-lg transition"
+                className="px-2 py-1 text-gray-400 hover:text-pink-300 hover:bg-pink-500/10 rounded transition whitespace-nowrap"
               >
                 {item.label}
               </Link>
@@ -112,8 +118,7 @@ export default function HomePage() {
           </nav>
 
           {/* Search + Actions */}
-          <div className="flex items-center gap-2">
-            {/* Search toggle */}
+          <div className="flex items-center gap-1">
             <button
               onClick={() => setSearchOpen(!searchOpen)}
               className="p-1.5 text-gray-400 hover:text-pink-400 transition"
@@ -122,13 +127,7 @@ export default function HomePage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </button>
-
-            {/* Random */}
-            <Link
-              href="/random"
-              className="p-1.5 text-gray-400 hover:text-pink-400 transition"
-              title="Acak"
-            >
+            <Link href="/random" className="p-1.5 text-gray-400 hover:text-pink-400 transition" title="Acak">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
@@ -136,7 +135,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Search Bar (expandable) */}
+        {/* Search Bar */}
         {searchOpen && (
           <div className="border-t border-pink-500/10 px-3 py-2">
             <form onSubmit={handleSearch} className="max-w-6xl mx-auto">
@@ -156,10 +155,7 @@ export default function HomePage() {
       {/* Mobile Sidebar */}
       {sidebarOpen && (
         <>
-          <div
-            className="fixed inset-0 bg-black/60 z-40 md:hidden"
-            onClick={() => setSidebarOpen(false)}
-          />
+          <div className="fixed inset-0 bg-black/60 z-40 md:hidden" onClick={() => setSidebarOpen(false)} />
           <div className="fixed top-0 left-0 bottom-0 w-64 bg-[#16213e] z-50 md:hidden overflow-y-auto shadow-xl border-r border-pink-500/20">
             <div className="p-4">
               <div className="flex items-center justify-between mb-6">
@@ -167,10 +163,7 @@ export default function HomePage() {
                   <span className="text-pink-400">Neko</span>
                   <span className="text-white">Poi</span>
                 </div>
-                <button
-                  onClick={() => setSidebarOpen(false)}
-                  className="text-gray-400 hover:text-pink-400"
-                >
+                <button onClick={() => setSidebarOpen(false)} className="text-gray-400 hover:text-pink-400">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
@@ -184,40 +177,9 @@ export default function HomePage() {
                     onClick={() => setSidebarOpen(false)}
                     className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-300 hover:text-pink-300 hover:bg-pink-500/10 rounded-lg transition"
                   >
-                    <span>{item.icon}</span>
                     {item.label}
                   </Link>
                 ))}
-                <div className="border-t border-pink-500/10 my-2 pt-2">
-                  <Link
-                    href="/hentai-list"
-                    onClick={() => setSidebarOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-300 hover:text-pink-300 hover:bg-pink-500/10 rounded-lg transition"
-                  >
-                    📋 Hentai List
-                  </Link>
-                  <Link
-                    href="/jav-list"
-                    onClick={() => setSidebarOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-300 hover:text-pink-300 hover:bg-pink-500/10 rounded-lg transition"
-                  >
-                    📋 JAV List
-                  </Link>
-                  <Link
-                    href="/genre-list"
-                    onClick={() => setSidebarOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-300 hover:text-pink-300 hover:bg-pink-500/10 rounded-lg transition"
-                  >
-                    🏷️ Genre List
-                  </Link>
-                  <Link
-                    href="/jadwal-new-hentai"
-                    onClick={() => setSidebarOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-300 hover:text-pink-300 hover:bg-pink-500/10 rounded-lg transition"
-                  >
-                    📅 Jadwal Hentai
-                  </Link>
-                </div>
               </nav>
             </div>
           </div>
@@ -241,135 +203,121 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Content */}
+      {/* Main Content */}
       <main className="max-w-6xl mx-auto px-3 py-6">
-        {/* Recommended */}
-        <section className="mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <span className="w-1 h-5 bg-pink-500 rounded-full" />
-            <h2 className="text-base font-bold text-white">DIREKOMENDASIKAN</h2>
+        {/* Loading */}
+        {loading && posts.length === 0 && (
+          <div className="text-center py-20">
+            <div className="inline-block w-8 h-8 border-2 border-pink-500/30 border-t-pink-500 rounded-full animate-spin" />
           </div>
-          {posts.length > 0 && (
-            <Link
-              href={`/post/${posts[0].slug}`}
-              className="block relative rounded-xl overflow-hidden border border-pink-500/20 hover:border-pink-400/40 transition group"
-            >
-              <div className="aspect-[16/9] bg-[#16213e] relative">
-                {posts[0].thumbnail ? (
-                  <Image
-                    src={posts[0].thumbnail}
-                    alt={posts[0].title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    sizes="100vw"
-                    unoptimized
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center text-gray-600">
-                    <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" />
-                    </svg>
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <span className="inline-block px-2 py-0.5 bg-pink-500/80 text-white text-[10px] rounded mb-2">
-                    REKOMENDASI
-                  </span>
-                  <h3 className="text-lg font-bold text-white leading-snug line-clamp-2">
-                    {posts[0].title}
-                  </h3>
-                  {posts[0].date && (
-                    <p className="text-xs text-gray-400 mt-1">{posts[0].date}</p>
-                  )}
-                </div>
+        )}
+
+        {/* Empty */}
+        {!loading && posts.length === 0 && (
+          <div className="text-center py-20 text-gray-500">
+            <p>Tidak ada konten. Coba lagi nanti.</p>
+          </div>
+        )}
+
+        {/* Posts Grid */}
+        {posts.length > 0 && (
+          <>
+            {/* First post as recommended (larger) */}
+            <section className="mb-8">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="w-1 h-5 bg-pink-500 rounded-full" />
+                <h2 className="text-base font-bold text-white">DIREKOMENDASIKAN</h2>
               </div>
-            </Link>
-          )}
-        </section>
-
-        {/* Latest Episodes */}
-        <section>
-          <div className="flex items-center gap-2 mb-4">
-            <span className="w-1 h-5 bg-pink-500 rounded-full" />
-            <h2 className="text-base font-bold text-white">EPISODE TERBARU</h2>
-          </div>
-
-          {/* Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-            {posts.slice(1).map((p) => (
               <Link
-                key={p.slug}
-                href={`/post/${p.slug}`}
-                className="group bg-[#16213e] rounded-lg overflow-hidden border border-pink-500/10 hover:border-pink-400/40 transition-all hover:shadow-lg hover:shadow-pink-500/5"
+                href={"/post/" + posts[0].slug}
+                className="block relative rounded-xl overflow-hidden border border-pink-500/20 hover:border-pink-400/40 transition group"
               >
-                <div className="aspect-[2/3] bg-[#1a1a2e] relative overflow-hidden">
-                  {p.thumbnail ? (
-                    <Image
-                      src={p.thumbnail}
-                      alt={p.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      sizes="20vw"
-                      unoptimized
-                    />
+                <div className="aspect-[16/9] bg-[#16213e] relative">
+                  {posts[0].thumbnail ? (
+                    <Image src={posts[0].thumbnail} alt={posts[0].title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="100vw" unoptimized />
                   ) : (
-                    <div className="absolute inset-0 flex items-center justify-center text-gray-700">
-                      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" />
+                    <div className="absolute inset-0 flex items-center justify-center text-gray-600">
+                      <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" />
                       </svg>
                     </div>
                   )}
-                  {p.category && (
-                    <div className="absolute top-2 left-2">
-                      <span className="px-1.5 py-0.5 bg-pink-500/80 text-white text-[9px] rounded font-medium">
-                        {p.category}
-                      </span>
-                    </div>
-                  )}
-                </div>
-                <div className="p-2.5">
-                  <h3 className="text-[11px] font-medium text-gray-300 line-clamp-2 group-hover:text-pink-300 transition leading-snug">
-                    {p.title}
-                  </h3>
-                  {p.date && (
-                    <p className="text-[10px] text-gray-500 mt-1">{p.date}</p>
-                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <span className="inline-block px-2 py-0.5 bg-pink-500/80 text-white text-[10px] rounded mb-2">REKOMENDASI</span>
+                    <h3 className="text-lg font-bold text-white leading-snug line-clamp-2">{posts[0].title}</h3>
+                    {posts[0].date && <p className="text-xs text-gray-400 mt-1">{posts[0].date}</p>}
+                  </div>
                 </div>
               </Link>
-            ))}
-          </div>
+            </section>
 
-          {/* Load More */}
-          {hasMore && !loading && (
-            <div className="text-center mt-8">
-              <button
-                onClick={loadMore}
-                className="px-6 py-2.5 bg-pink-600 text-white text-sm font-medium rounded-lg hover:bg-pink-700 transition"
-              >
-                Muat Lebih Banyak
-              </button>
-            </div>
-          )}
+            {/* Episode Terbaru */}
+            <section>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="w-1 h-5 bg-pink-500 rounded-full" />
+                <h2 className="text-base font-bold text-white">EPISODE TERBARU</h2>
+              </div>
 
-          {/* Loading */}
-          {loading && (
-            <div className="text-center py-8">
-              <div className="inline-block w-8 h-8 border-2 border-pink-500/30 border-t-pink-500 rounded-full animate-spin" />
-            </div>
-          )}
-        </section>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                {posts.slice(1).map((p) => (
+                  <Link
+                    key={p.slug}
+                    href={"/post/" + p.slug}
+                    className="group bg-[#16213e] rounded-lg overflow-hidden border border-pink-500/10 hover:border-pink-400/40 transition-all hover:shadow-lg hover:shadow-pink-500/5"
+                  >
+                    <div className="aspect-[2/3] bg-[#1a1a2e] relative overflow-hidden">
+                      {p.thumbnail ? (
+                        <Image src={p.thumbnail} alt={p.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="20vw" unoptimized />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center text-gray-700">
+                          <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" />
+                          </svg>
+                        </div>
+                      )}
+                      {p.category && (
+                        <div className="absolute top-2 left-2">
+                          <span className="px-1.5 py-0.5 bg-pink-500/80 text-white text-[9px] rounded font-medium">{p.category}</span>
+                        </div>
+                      )}
+                      {p.date && (
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-1.5">
+                          <span className="text-[9px] text-gray-300">{p.date}</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-2.5">
+                      <h3 className="text-[11px] font-medium text-gray-300 line-clamp-2 group-hover:text-pink-300 transition leading-snug">{p.title}</h3>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+
+              {/* Load More */}
+              {hasMore && (
+                <div className="text-center mt-8">
+                  <button
+                    onClick={loadMore}
+                    disabled={loading}
+                    className="px-6 py-2.5 bg-pink-600 text-white text-sm font-medium rounded-lg hover:bg-pink-700 disabled:opacity-50 transition"
+                  >
+                    {loading ? 'Memuat...' : 'Muat Lebih Banyak'}
+                  </button>
+                </div>
+              )}
+            </section>
+          </>
+        )}
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-pink-500/10 py-6 text-center">
+      <footer className="border-t border-pink-500/10 py-6 text-center mt-auto">
         <p className="text-xs text-gray-600">
           © NekoPoi — Situs ini tidak menyimpan file apapun di servernya. Semua konten disediakan oleh pihak ketiga.
         </p>
         <div className="flex justify-center gap-4 mt-2">
-          <Link href="/privacy" className="text-[10px] text-gray-600 hover:text-pink-400">
-            Privacy Policy
-          </Link>
+          <span className="text-[10px] text-gray-600">Privacy Policy</span>
           <span className="text-[10px] text-gray-600">•</span>
           <span className="text-[10px] text-gray-600">2257</span>
         </div>
