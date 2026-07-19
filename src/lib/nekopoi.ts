@@ -375,17 +375,29 @@ export async function getHentaiList(): Promise<any[]> {
     const $ = cheerio.load(html);
     const items: any[] = [];
 
-    // The list is in .nk-hentai-grid with li > a.nk-series-link
-    $('.nk-hentai-grid li a.nk-series-link').each((_, el) => {
+    // Hentai list uses a.nk-series-link with title in original-title attribute's h2
+    $('a.nk-series-link').each((_, el) => {
       const $el = $(el);
       const href = $el.attr('href') || '';
-      const title = $el.find('.title').text().trim();
-      if (!href || !title) return;
+      if (!href) return;
+
+      // Title is inside original-title attribute: <h2>Title</h2>
+      const origTitle = $el.attr('original-title') || '';
+      const h2Match = origTitle.match(/<h2>([^<]*)<\/h2>/);
+      const title = h2Match ? h2Match[1] : $el.find('.title').text().trim();
+      if (!title) return;
 
       const slug = href.replace(BASE + '/', '').replace(/\/$/, '');
-      const style = $el.find('.nk-hentai-thumb').attr('style') || '';
-      const thumbMatch = style.match(/url\(['"]?([^'"]+)['"]?\)/);
-      const thumbnail = thumbMatch ? thumbMatch[1] : '';
+      
+      // Thumbnail from original-title's img tag
+      let thumbnail = '';
+      const imgMatch = origTitle.match(/<img[^>]*src="([^"]+)"/);
+      if (imgMatch) thumbnail = imgMatch[1];
+      if (!thumbnail) {
+        const style = $el.find('.nk-hentai-thumb').attr('style') || '';
+        const thumbMatch = style.match(/url\(['"]?([^'"]+)['"]?\)/);
+        if (thumbMatch) thumbnail = thumbMatch[1];
+      }
 
       items.push({ title, slug, thumbnail, type: 'hentai' });
     });
@@ -406,20 +418,48 @@ export async function getJavList(): Promise<any[]> {
     const $ = cheerio.load(html);
     const items: any[] = [];
 
-    // JAV list uses .nk-jav-grid with li > a
-    $('.nk-jav-grid li a').each((_, el) => {
+    // JAV list may use nk-series-link or nk-jav-grid
+    // Try nk-series-link first (like hentai list)
+    $('a.nk-series-link').each((_, el) => {
       const $el = $(el);
       const href = $el.attr('href') || '';
-      const title = $el.find('.nk-jav-meta h2, .title').first().text().trim();
-      if (!href || !title) return;
+      if (!href) return;
+
+      const origTitle = $el.attr('original-title') || '';
+      const h2Match = origTitle.match(/<h2>([^<]*)<\/h2>/);
+      const title = h2Match ? h2Match[1] : $el.find('.title').text().trim();
+      if (!title) return;
 
       const slug = href.replace(BASE + '/', '').replace(/\/$/, '');
-      const style = $el.find('.nk-thumb-crop, .nk-hentai-thumb').attr('style') || '';
-      const thumbMatch = style.match(/url\(['"]?([^'"]+)['"]?\)/);
-      const thumbnail = thumbMatch ? thumbMatch[1] : '';
+      
+      let thumbnail = '';
+      const imgMatch = origTitle.match(/<img[^>]*src="([^"]+)"/);
+      if (imgMatch) thumbnail = imgMatch[1];
+      if (!thumbnail) {
+        const style = $el.find('.nk-hentai-thumb').attr('style') || '';
+        const thumbMatch = style.match(/url\(['"]?([^'"]+)['"]?\)/);
+        if (thumbMatch) thumbnail = thumbMatch[1];
+      }
 
       items.push({ title, slug, thumbnail, type: 'jav' });
     });
+
+    // Fallback: try .nk-jav-grid
+    if (items.length === 0) {
+      $('.nk-jav-grid li a').each((_, el) => {
+        const $el = $(el);
+        const href = $el.attr('href') || '';
+        const title = $el.find('.nk-jav-meta h2, .title').first().text().trim();
+        if (!href || !title) return;
+
+        const slug = href.replace(BASE + '/', '').replace(/\/$/, '');
+        const style = $el.find('.nk-thumb-crop, .nk-hentai-thumb').attr('style') || '';
+        const thumbMatch = style.match(/url\(['"]?([^'"]+)['"]?\)/);
+        const thumbnail = thumbMatch ? thumbMatch[1] : '';
+
+        items.push({ title, slug, thumbnail, type: 'jav' });
+      });
+    }
 
     return items;
   } catch {
