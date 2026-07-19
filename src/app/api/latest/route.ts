@@ -7,6 +7,6 @@ export async function GET(req: NextRequest) {
   const page = parseInt(req.nextUrl.searchParams.get('page') || '1') || 1;
   const posts = await getLatest(page);
   return NextResponse.json(posts, {
-    headers: { 'Cache-Control': 'public, max-age=600, s-maxage=3600' },
+    headers: { 'Cache-Control': 'public, max-age=300, s-maxage=1800' },
   });
 }
