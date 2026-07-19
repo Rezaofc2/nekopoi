@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NekoPoi — Streaming Scraper
 
-## Getting Started
+Scraper & streaming web untuk [nekopoi.care](https://nekopoi.care) — tampilan UI mirip original, **tanpa iklan**.
 
-First, run the development server:
+## Fitur
+
+- 🎨 Dark theme UI mirip nekopoi.care asli (pink accent, grid layout)
+- 📱 Responsive mobile-first design
+- 🔍 Search judul / genre
+- 📺 Streaming langsung via iframe (Server 1/2/3) — **tanpa iklan**
+- ⬇️ Download links (360p, 480p, 720p) via Mp4Upload, PixelDrain, Mirror
+- 💡 Mode "Matikan Lampu" & Fullscreen
+- 🎲 Random post
+- 📂 Kategori (Hentai, JAV, 2D Animation, 3D Hentai, dll)
+- ⚡ Server-side scraping dengan cheerio
+
+## Teknologi
+
+- **Next.js 16** (App Router)
+- **TypeScript**
+- **Tailwind CSS v4**
+- **Cheerio** untuk scraping
+
+## Cara Deploy
+
+### Vercel (Rekomendasi)
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Rezaofc2/nekopoi)
+
+### Lokal
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# buka http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Struktur Proyek
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+src/
+├── app/
+│   ├── api/
+│   │   ├── latest/route.ts    # Get latest posts
+│   │   ├── detail/route.ts    # Get post detail + stream
+│   │   ├── search/route.ts    # Search posts
+│   │   └── random/route.ts    # Random post
+│   ├── category/[cat]/page.tsx # Category page
+│   ├── post/[slug]/page.tsx   # Detail + streaming page
+│   ├── random/page.tsx        # Random redirect
+│   ├── layout.tsx
+│   ├── page.tsx               # Home page
+│   └── globals.css
+└── lib/
+    └── nekopoi.ts             # Scraper logic
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Disclaimer
 
-## Learn More
+Situs ini TIDAK menyimpan file apapun. Semua konten di-scrape dari nekopoi.care (pihak ketiga). Untuk 18+ saja.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+© NekoPoi — Fan Project
