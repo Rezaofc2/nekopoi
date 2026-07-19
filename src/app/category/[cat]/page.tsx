@@ -15,24 +15,17 @@ interface PostItem {
 
 export default function CategoryPage() {
   const params = useParams();
-  const cat = params.cat as string;
+  const cat = (params.cat as string || '').replace(/-/g, ' ');
   const [posts, setPosts] = useState<PostItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
-    fetch('/api/latest?page=1')
+    fetch(`/api/category?cat=${encodeURIComponent(params.cat as string)}`)
       .then(r => r.json())
-      .then((all: PostItem[]) => {
-        const filtered = all.filter(p =>
-          p.category?.toLowerCase() === cat.toLowerCase() ||
-          p.slug?.toLowerCase().includes(cat.toLowerCase())
-        );
-        setPosts(filtered);
-        setLoading(false);
-      })
+      .then(d => { setPosts(d || []); setLoading(false); })
       .catch(() => setLoading(false));
-  }, [cat]);
+  }, [params.cat]);
 
   return (
     <div className="min-h-screen bg-[#1a1a2e] text-white">
@@ -44,7 +37,7 @@ export default function CategoryPage() {
             </svg>
             Kembali
           </Link>
-          <h1 className="text-sm font-bold capitalize">{cat.replace(/-/g, ' ')}</h1>
+          <h1 className="text-sm font-bold capitalize">{cat}</h1>
         </div>
       </header>
       <main className="max-w-6xl mx-auto px-3 py-6">
@@ -76,9 +69,7 @@ export default function CategoryPage() {
                   )}
                 </div>
                 <div className="p-2.5">
-                  <h3 className="text-[11px] font-medium text-gray-300 line-clamp-2 group-hover:text-pink-300 transition leading-snug">
-                    {p.title}
-                  </h3>
+                  <h3 className="text-[11px] font-medium text-gray-300 line-clamp-2 group-hover:text-pink-300 transition leading-snug">{p.title}</h3>
                   {p.date && <p className="text-[10px] text-gray-500 mt-1">{p.date}</p>}
                 </div>
               </Link>
