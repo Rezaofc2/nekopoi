@@ -311,6 +311,7 @@ export async function getCategoryPage(
     const $ = cheerio.load(html);
     const posts: PostItem[] = [];
 
+    // Try .nk-post-card first (some category pages may use it)
     $('.nk-post-card').each((_, el) => {
       const $el = $(el);
       const $a = $el.find('h2 a').first();
@@ -326,9 +327,37 @@ export async function getCategoryPage(
       const thumbnail = thumbMatch ? thumbMatch[1] : '';
 
       const dateSpan = $el.find('.nk-post-meta span').first().text().trim();
-
       posts.push({ title, slug, thumbnail, date: dateSpan, category });
     });
+
+    // Fallback: category pages use h2 > a directly in .nk-main-content
+    if (posts.length === 0) {
+      $('.nk-main-content h2 a').each((_, el) => {
+        const $a = $(el);
+        const title = $a.text().trim();
+        const href = $a.attr('href') || '';
+        if (!title || !href) return;
+
+        const slug = href.replace(BASE + '/', '').replace(/\/$/, '');
+        if (!slug) return;
+
+        // Find nearest image in parent containers
+        let thumbnail = '';
+        const $entry = $a.closest('.nk-main-content');
+        // Look for img near this h2
+        const $prevImg = $a.closest('p, div').prevAll('p, div').find('img').first();
+        if ($prevImg.length) thumbnail = $prevImg.attr('src') || '';
+        if (!thumbnail) {
+          // Try to find any img before this link
+          $('.nk-main-content img').each((_, img) => {
+            const $img = $(img);
+            if ($img.attr('src') && !thumbnail) thumbnail = $img.attr('src') || '';
+          });
+        }
+
+        posts.push({ title, slug, thumbnail, date: '', category });
+      });
+    }
 
     return posts;
   } catch {
