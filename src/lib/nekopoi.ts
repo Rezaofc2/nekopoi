@@ -501,7 +501,16 @@ export async function getJadwalHentai(): Promise<string> {
     });
     const html = await res.text();
     const $ = cheerio.load(html);
-    return $('.entry-content').html() || $('.content').html() || '';
+    
+    // Try multiple content selectors
+    let result = $('.content').html() || $('.entry-content').html() || $('.nk-main-content').html() || '';
+    
+    // If still empty, grab anything in main/body
+    if (!result || result.length < 50) {
+      result = $('main').html() || $('body').html() || '';
+    }
+    
+    return result || '';
   } catch {
     return '';
   }
