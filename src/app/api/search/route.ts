@@ -8,6 +8,6 @@ export async function GET(req: NextRequest) {
   if (!q.trim()) return NextResponse.json([]);
   const posts = await searchNekopoi(q);
   return NextResponse.json(posts, {
-    headers: { 'Cache-Control': 'public, max-age=600, s-maxage=3600' },
+    headers: { 'Cache-Control': 'public, max-age=300, s-maxage=1800' },
   });
 }
